@@ -16,6 +16,12 @@ public final class WardrobeController {
     public void addClothing(String name, String type, String imagePath) {
         submit(() -> input.addClothing(name, type, imagePath));
     }
+    public void editClothing(String clothingId, String name, String type, String newImagePath) {
+        submit(() -> input.editClothing(clothingId, name, type, newImagePath));
+    }
+    public void deleteClothing(String clothingId) {
+        submit(() -> input.deleteClothing(clothingId));
+    }
     private void submit(Runnable action) {
         if (busy) return;
         busy = true;

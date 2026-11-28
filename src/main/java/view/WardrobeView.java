@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,7 @@ public final class WardrobeView extends JPanel {
             new String[]{"All types", "HAT", "TOP", "BOTTOM", "SHOES"});
     private final JButton add = new JButton("Add Clothing");
     private final JLabel status = new JLabel("Loading...");
+    private final List<JButton> editButtons = new ArrayList<>();
     private final WardrobeController controller;
     private final WardrobeViewModel model;
     private boolean busy;
@@ -69,10 +71,30 @@ public final class WardrobeView extends JPanel {
                 case "busy":
                     busy = (Boolean) event.getNewValue();
                     add.setEnabled(!busy && model.getState() != null);
+                    editButtons.forEach(b -> b.setEnabled(!busy));
                     break;
                 default: break;
             }
         });
+    }
+
+    private JPanel buildCard(ClothingData item) {
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.setBorder(BorderFactory.createTitledBorder(item.category));
+
+        JButton edit = new JButton("Edit");
+        edit.setMargin(new Insets(1, 6, 1, 6));
+        edit.setFocusable(false);
+        edit.setEnabled(!busy);
+        edit.addActionListener(e -> new EditClothingDialog(
+                SwingUtilities.getWindowAncestor(this), controller, model, item).setVisible(true));
+        editButtons.add(edit);
+
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        top.add(edit);
+        wrapper.add(top, BorderLayout.NORTH);
+        wrapper.add(new ClothingCardPanel(item), BorderLayout.CENTER);
+        return wrapper;
     }
 
     private void render() {
@@ -87,6 +109,7 @@ public final class WardrobeView extends JPanel {
                 .collect(Collectors.toList());
 
         grid.removeAll();
+        editButtons.clear();
         if (state.clothing.isEmpty()) {
             grid.setLayout(new FlowLayout(FlowLayout.LEFT));
             grid.add(new JLabel("Your wardrobe is empty. Click \"Add Clothing\" to add your first item!"));
@@ -95,11 +118,7 @@ public final class WardrobeView extends JPanel {
             grid.add(new JLabel("No matching items"));
         } else {
             grid.setLayout(new GridLayout(0, 4, 10, 10));
-            for (ClothingData item : shown) {
-                ClothingCardPanel card = new ClothingCardPanel(item);
-                card.setBorder(BorderFactory.createTitledBorder(item.category));
-                grid.add(card);
-            }
+            for (ClothingData item : shown) grid.add(buildCard(item));
             // Keep a lone card from stretching across the whole grid.
             while (grid.getComponentCount() < 4) grid.add(new JPanel());
         }
