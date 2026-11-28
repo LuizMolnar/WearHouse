@@ -16,9 +16,20 @@ public final class InMemoryOutfitRepository implements OutfitRepository, Wardrob
     }
     public List<ClothingItem> getClothing() { return List.copyOf(clothing); }
     public void saveClothing(ClothingItem item) { clothing.add(item); }
+    public void updateClothing(ClothingItem item) {
+        for (int i = 0; i < clothing.size(); i++) {
+            if (clothing.get(i).getId().equals(item.getId())) {
+                clothing.set(i, item);
+                return;
+            }
+        }
+    }
+    public void deleteClothing(String clothingId) {
+        clothing.removeIf(c -> c.getId().equals(clothingId));
+    }
     public List<Outfit> getOutfits() { return new ArrayList<>(outfits.values()); }
     public List<Tag> getTags() { return new ArrayList<>(tags.values()); }
     public void saveOutfit(Outfit outfit) { outfits.put(outfit.getId(), outfit); }
     public void saveTag(Tag tag) { tags.put(tag.getId(), tag); }
     public void deleteOutfit(String id) { outfits.remove(id); }
-};
+}

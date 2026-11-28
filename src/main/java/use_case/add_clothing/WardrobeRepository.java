@@ -7,4 +7,7 @@ import java.util.List;
 public interface WardrobeRepository {
     List<ClothingItem> getClothing();
     void saveClothing(ClothingItem item);
+    /** Replaces the stored item that has the same id. */
+    void updateClothing(ClothingItem item);
+    void deleteClothing(String clothingId);
 }

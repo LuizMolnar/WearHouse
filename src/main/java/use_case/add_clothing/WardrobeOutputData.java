@@ -7,11 +7,16 @@ import java.util.List;
 public final class WardrobeOutputData {
     public final List<ClothingData> clothing;
     public final String message;
+    // True only right after a new item was saved (closes the Add dialog).
     public final boolean itemAdded;
+    // True only right after an item was edited or deleted (closes the Edit dialog)
+    public final boolean itemUpdated;
 
-    public WardrobeOutputData(List<ClothingData> clothing, String message, boolean itemAdded) {
+    public WardrobeOutputData(List<ClothingData> clothing, String message,
+                              boolean itemAdded, boolean itemUpdated) {
         this.clothing = List.copyOf(clothing);
         this.message = message;
         this.itemAdded = itemAdded;
+        this.itemUpdated = itemUpdated;
     }
 }
